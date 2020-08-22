@@ -1,14 +1,17 @@
 import React from 'react';
 import './App.css';
 
-function App() {
+require('dotenv').config()
 
-  function Streamer() {
-    const twitchURL = 'https://api.twitch.tv/helix/streams?user_login=gamesdonequick'
-    const BEARER_TOKEN = 'rxmpajjmb1jvrrad0tu2gth78sip0j'
-    const CLIENT_ID = '226970d9mbfxsg83n2taksg2c44hzs';
-  
-    
+
+const twitchURL = 'https://api.twitch.tv/helix/streams?user_login=gamesdonequick'
+const BEARER_TOKEN = process.env.BEARER_TOKEN
+const CLIENT_ID = process.env.CLIENT_ID
+
+
+
+function App() {
+  function Streamer() {  
     async function getData(url = '', data = {}) {
       // Default options are marked with *
       const response = await fetch(url, {
@@ -33,6 +36,8 @@ function App() {
         console.log(data.data[0]); // JSON data parsed by `data.json()` call
       });
   }
+
+  Streamer()
 
   return (
     <div className="App">
