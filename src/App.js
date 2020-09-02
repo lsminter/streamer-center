@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import './App.css';
-import useSWR from 'swr'
-import {get} from 'lodash'
+// import useSWR from 'swr'
+// import {get} from 'lodash'
 
 import {twitchResponse} from './components/twitch-response'
 
 
 /* 
-**PRIORITY** I need to figure out how to use pagination to get the rest of the streamers. Only getting live streamers for the first 100 streamers. 
+Pagination figured out! 
 I need user_name, game_id, thumbnail_url, title, viewer_count, started_at.
 The viewer_count is displayed as an overlay on the thumbnail_url.
 To find how long the streamer has been streaming, you check the `started_at` and compare that to what the time is now. 
@@ -18,10 +18,12 @@ Do I want to have `tags` under each streamer? Tags are things like `Esports`, an
 tag_ids are displayed as a string of characters that will match up to a specific word. 
 */
 
-const USER_ID = 'https://api.twitch.tv/helix/users?login=minterhero' //Need to figure out how to use the input to replace the username
+const USER_ID = 'https://api.twitch.tv/helix/users?login=<username>' //Need to figure out how to use the input to replace the username
 const STREAMS_URL = 'https://api.twitch.tv/helix/streams?user_id='
 const BEARER_TOKEN = 'rxmpajjmb1jvrrad0tu2gth78sip0j'
 const CLIENT_ID = '226970d9mbfxsg83n2taksg2c44hzs'
+
+//I want to figure out why dotenv isn't working so I can stream my learning. 
 
 function replaceThumbnailSize (url, size) {
   return url.replace(/{width}x{height}/, size)
@@ -41,11 +43,6 @@ function insertUsername (url, el) {
 }
 
 function App() {
-  const [username, setUsername] = useState('Test');
-  const handleUsernameChange = (evt) => {
-    const newValue = evt.target.value;
-    setUsername(newValue)
-  } // This is making the page reload when I click the button.
 
   async function getData(url, data) { //look into axios possibly (*side project*)
     const response = await fetch(url, {
@@ -57,19 +54,28 @@ function App() {
     return response.json(); 
   }
 
-  const [streamsData, setStreamsData] = useState({streams: [], cursor: null});
+  // const [streamsData, setStreamsData] = useState({streams: [], cursor: null});
+  const [username, setUsername] = useState('Enter username');
 
-  const { data: currentUser } = useSWR(USER_ID, getData)
-  const userID = insertId(get(currentUser, 'data[0].id'), streamsData.cursor)
-  const {data: streams} = useSWR(userID, getData, {onSuccess: (data) => {
-    const newStreams = streamsData.streams.concat(data.data)
-    console.log({data})
-    setStreamsData({streams: newStreams, cursor: get(data, 'pagination.cursor')})
-  }})
-  console.log(streamsData)
+  // const { data: currentUser } = useSWR(USER_ID, getData)
+  // const userID = insertId(get(currentUser, 'data[0].id'), streamsData.cursor)
+  // const {data: streams} = useSWR(userID, getData, {onSuccess: (data) => {
+  //   const newStreams = streamsData.streams.concat(data.data) 
+  //   //This makes one big array. It's too big. Might need to make multiple fetch requests?
+  //   setStreamsData({streams: newStreams, cursor: get(data, 'pagination.cursor')})
+  // }})
+  // const streamIds =streamsData.streams.map(x => x.to_id)
+  // const streamsUrl = STREAMS_URL + streamIds.join('&user_id=')
+  // const {data: liveStreamers} = useSWR(streamsUrl, getData, {onSuccess: (data) => {
+    
+  // }})
+  // console.log(liveStreamers) 
+  //The way we set up the pagination to create one big array means that this is making too big of a request. I can't do more than 100 streamers at a time. 
+
 
   function getStreamer() {
-    return getData(USER_ID)
+    let id = insertUsername(USER_ID, username)
+    return getData(id)
       .then(data => {
         const userID = insertId(data.data[0].id)
         console.log(userID)
@@ -77,23 +83,28 @@ function App() {
           .then(data => {
             const streamIds = data.data.map(x => x.to_id)
             const streamsUrl = STREAMS_URL + streamIds.join('&user_id=')
-            return getData(streamsUrl) // I was going to sort the result of this by viewer count but it is already sorted by viewer_count
+            return getData(streamsUrl) 
               .then(data => { 
-                 // This logs an array of the live users minterhero follows out of the first 100 follows. Need to figure out pagination to check the next 100 follows. 
+                console.log(data.data)
+                 
               })
-            });// need to figure out how cherry pick certain values off of each object in the array. 
+            });
           })
+  }
+
+  function handleSubmit(evt) {
+    evt.preventDefault();
+    getStreamer()
   }
   
   return (
     <div className="App">
       <header className="App-header">
         <div>
-          <form>
-            username: 
-            <input value={username} />
-             {/*this form only re-renders the page, trying to figure out why. I think onSubmit is trying to redirect?*/}
-            <button type="submit">Submit</button>
+          <form onSubmit={handleSubmit}>
+            Enter your username: 
+            <input type="text" defaultValue={username} onChange={(e) => {setUsername(e.target.value)}} />
+             <button type="submit">Submit</button>
           </form>
         </div> 
 
