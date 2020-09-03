@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
-// import useSWR from 'swr'
-// import {get} from 'lodash'
+import useSWR from 'swr'
+import {get, isEmpty} from 'lodash'
 
 import {twitchResponse} from './components/twitch-response'
 
@@ -44,6 +44,7 @@ function insertUsername (url, el) {
 
 function App() {
 
+  
   async function getData(url, data) { //look into axios possibly (*side project*)
     const response = await fetch(url, {
       headers: ({
@@ -53,48 +54,61 @@ function App() {
     });
     return response.json(); 
   }
-
-  // const [streamsData, setStreamsData] = useState({streams: [], cursor: null});
+  
+  const [streamsData, setStreamsData] = useState({streams: [], currentCursor: null, total: null});
   const [username, setUsername] = useState('Enter username');
+  const [liveStreamers, setLiveStreamers] = useState([])
 
-  // const { data: currentUser } = useSWR(USER_ID, getData)
-  // const userID = insertId(get(currentUser, 'data[0].id'), streamsData.cursor)
-  // const {data: streams} = useSWR(userID, getData, {onSuccess: (data) => {
-  //   const newStreams = streamsData.streams.concat(data.data) 
-  //   //This makes one big array. It's too big. Might need to make multiple fetch requests?
-  //   setStreamsData({streams: newStreams, cursor: get(data, 'pagination.cursor')})
-  // }})
-  // const streamIds =streamsData.streams.map(x => x.to_id)
-  // const streamsUrl = STREAMS_URL + streamIds.join('&user_id=')
-  // const {data: liveStreamers} = useSWR(streamsUrl, getData, {onSuccess: (data) => {
-    
-  // }})
-  // console.log(liveStreamers) 
+  let id = insertUsername(USER_ID, username)
+  const { data: currentUser } = useSWR(id, getData)
+  const userID = streamsData.streams.length === streamsData.total ? null : insertId(get(currentUser, 'data[0].id'), streamsData.currentCursor)
+  const {data: streams} = useSWR(userID, getData, {onSuccess: (streamsResponse) => {
+    const newStreams = streamsData.streams.concat(streamsResponse.data)
+    const currentCursor = get(streamsResponse, 'pagination.cursor')
+    console.log(streamsResponse)
+    //This makes one big array. It's too big. Might need to make multiple fetch requests?
+    setStreamsData({streams: newStreams, currentCursor, total: streamsResponse.total})
+    const streamIds = streamsResponse.data.map(x => x.to_id)
+    const streamsUrl = STREAMS_URL + streamIds.join('&user_id=')
+    if (isEmpty(streamIds)) {
+      return
+    } else {
+      getData(streamsUrl) 
+        .then(response => {
+          setLiveStreamers((currentLiveStreamers) => {
+            const newLiveStreams = currentLiveStreamers.concat(response.data)
+            return newLiveStreams
+          })
+        })
+    }
+  }})
+  console.log(liveStreamers)
+  console.log(userID)
   //The way we set up the pagination to create one big array means that this is making too big of a request. I can't do more than 100 streamers at a time. 
 
 
-  function getStreamer() {
-    let id = insertUsername(USER_ID, username)
-    return getData(id)
-      .then(data => {
-        const userID = insertId(data.data[0].id)
-        console.log(userID)
-        return getData(userID)
-          .then(data => {
-            const streamIds = data.data.map(x => x.to_id)
-            const streamsUrl = STREAMS_URL + streamIds.join('&user_id=')
-            return getData(streamsUrl) 
-              .then(data => { 
-                console.log(data.data)
+  // function getStreamer() {
+  //   let id = insertUsername(USER_ID, username)
+  //   return getData(id)
+  //     .then(data => {
+  //       const userID = insertId(data.data[0].id)
+  //       console.log(userID)
+  //       return getData(userID)
+  //         .then(data => {
+  //           const streamIds = data.data.map(x => x.to_id)
+  //           const streamsUrl = STREAMS_URL + streamIds.join('&user_id=')
+  //           return getData(streamsUrl) 
+  //             .then(data => { 
+  //               console.log(data.data)
                  
-              })
-            });
-          })
-  }
+  //             })
+  //           });
+  //         })
+  // }
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    getStreamer()
+    setUsername();
   }
   
   return (
@@ -103,30 +117,29 @@ function App() {
         <div>
           <form onSubmit={handleSubmit}>
             Enter your username: 
-            <input type="text" defaultValue={username} onChange={(e) => {setUsername(e.target.value)}} />
-             <button type="submit">Submit</button>
+            <input type="text" defaultValue='' onChange={(e) => {setUsername(e.target.value)}} />
+            <input type="submit"/>
           </form>
-        </div> 
+        </div>
 
         <div className="table"> {/*I think I'm going to look into the course flexbox-fundamentals to learn more about styling*/}
-          <div>
-            <img alt='' src={replaceThumbnailSize(twitchResponse[0].thumbnail_url, '200x150')}></img>
+
+        <ul>{liveStreamers.map((liveStream) => {
+          return (
+            <li> <div>
+            <img alt='' src={replaceThumbnailSize(liveStream.thumbnail_url, '200x150')}></img>
             <h2>
-              {twitchResponse[0].user_name}
+              {liveStream.user_name}
             </h2>
             <h5>
-            {twitchResponse[0].title}
+            {liveStream.title}
             </h5>
-          </div>
-          <div>
-            <img alt='' src={replaceThumbnailSize(twitchResponse[1].thumbnail_url, '200x150')}></img>
-            <h2>
-              {twitchResponse[1].user_name}
-            </h2>
             <h5>
-            {twitchResponse[1].title}
+              {liveStream.viewer_count}
             </h5>
-          </div>
+          </div></li>
+          )
+        })}</ul>
 
         </div>
       </header>
