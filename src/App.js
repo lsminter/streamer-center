@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import useSWR from 'swr'
-import _, {get, isEmpty, orderBy} from 'lodash'
+import _, {get, isEmpty, orderBy, uniq} from 'lodash'
 
 
 
@@ -21,7 +21,6 @@ const USER_ID = 'https://api.twitch.tv/helix/users?login=<username>'
 const STREAMS_URL = 'https://api.twitch.tv/helix/streams?user_id='
 const BEARER_TOKEN = process.env.REACT_APP_BEARER_TOKEN
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID
-const GAME_NAME = 'https://api.twitch.tv/helix/games?id=<game_id>'
 
 function replaceThumbnailSize (url, size) {
   return url.replace(/{width}x{height}/, size)
@@ -40,7 +39,9 @@ function insertUsername (url, el) {
   return url.replace(/<username>/, el)
 }
 
-function insertGameId (url, el) {
+function buildGameUrl (el) {
+  if(!el) return;
+  let url = 'https://api.twitch.tv/helix/games?id=<game_id>'
   return url.replace(/<game_id>/, el)
 }
 
@@ -60,6 +61,7 @@ function App() {
   const [streamsData, setStreamsData] = useState({streams: [], currentCursor: null, total: null});
   const [username, setUsername] = useState('Enter username');
   const [liveStreamers, setLiveStreamers] = useState([]);
+  const [gameName, setGameName] = useState({});
 
   let id = insertUsername(USER_ID, username)
   const { data: currentUser } = useSWR(id, getData)
@@ -83,12 +85,26 @@ function App() {
     }
   }})
 
-  console.log()
+  let liveGameIds = uniq(liveStreamers.map((stream) => {
+    return stream.game_id
+  }))
+
+  useSWR(buildGameUrl(liveGameIds.join("&id=")), getData, {onSuccess: (successfulResponse) => {
+    setGameName(successfulResponse.data.reduce((acc, curr) => {
+      acc[curr.id] = curr
+      return acc
+    }, {}))
+  }})
+  
+  console.log(gameName)
 
   // Look into GraphQL https://github.com/mauricew/twitch-graphql-api
   
-
-  // The data returned is in order of highest viewers to lower but it gets messed up because of the pagination. It lists them in order of view count for the first 100 then starts over again with the next array of 100 people. I'm creating multiple lists, one for each array. 
+  // let gameLink = buildGameUrl(GAME_NAME, liveStream.game_id)
+  // getData(gameLink)
+  //   .then(response => {
+  //     console.log(response.data[0].name)
+  //   }) 
   
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -117,12 +133,6 @@ function App() {
         <nav className="main-nav">
           <ul>{orderBy(liveStreamers, ['viewer_count'], ['desc']).map((liveStream) => {
 
-            // let gameLink = insertGameId(GAME_NAME, liveStream.game_id)
-            // // cant use useSWR here. 
-            // getData(gameLink)
-            //   .then(response => {
-            //     console.log(response.data[0].name)
-            //   }) // We get back the name but I need to figure out how to set this to state to be able to use it later in the app. Can't use setState in here either. I don't think it likes me using hooks here. 
 
             // styling: https://egghead.io/playlists/create-a-landing-page-with-css-grid-and-flexbox-6048
             // https://egghead.io/lessons/flexbox-create-an-automatically-responsive-flexbox-gallery
@@ -151,9 +161,9 @@ function App() {
                       Viewers: {liveStream.viewer_count}
                     </h3>
                   </a>
-                  <a href={"https://twitch.tv/game/" + liveStream.game_id}>
+                  <a href={"https://twitch.tv/directory/game/" + get(gameName, `${liveStream.game_id}.name`)}>
                     <h3 className="viewers">
-                      Game Id: {}
+                      {get(gameName, `${liveStream.game_id}.name`)}
                     </h3>
                     {/* To get a game's name, I have to make a fet request with the game ID then I can display the name. */}
                   </a>
