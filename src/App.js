@@ -85,13 +85,14 @@ function App() {
     }
   }})
 
+  // Look into GraphQL https://github.com/mauricew/twitch-graphql-api
   
 
   // The data returned is in order of highest viewers to lower but it gets messed up because of the pagination. It lists them in order of view count for the first 100 then starts over again with the next array of 100 people. I'm creating multiple lists, one for each array. 
   
   function handleSubmit(evt) {
-    _.debounce(setUsername(), 500);
     evt.preventDefault();
+    setUsername(evt.target.elements.username.value);
   }
   
   return (
@@ -104,7 +105,8 @@ function App() {
               autoFocus={true} 
               type="text" 
               defaultValue='' 
-              onChange={(e) => {setUsername(e.target.value)}} />
+              id="username"
+            />
               {/* Using onSubmit returns undefined. onChange will run the code as I'm typing (undesired result as listed below). Possibly use `debounce` by lodash? */}
             <input type="submit"/>
           </form>
@@ -115,12 +117,15 @@ function App() {
         <nav className="main-nav">
           <ul>{liveStreamers.map((liveStream) => {
 
-            let gameLink = insertGameId(GAME_NAME, liveStream.game_id)
-            // cant use useSWR here. 
-            getData(gameLink)
-              .then(response => {
-                console.log(response.data[0].name)
-              }) // We get back the name but I need to figure out how to set this to state to be able to use it later in the app. Can't use setState in here either. I don't think it likes me using hooks here. 
+            // let gameLink = insertGameId(GAME_NAME, liveStream.game_id)
+            // // cant use useSWR here. 
+            // getData(gameLink)
+            //   .then(response => {
+            //     // console.log(response.data[0].name)
+            //   }) // We get back the name but I need to figure out how to set this to state to be able to use it later in the app. Can't use setState in here either. I don't think it likes me using hooks here. 
+
+            // styling: https://egghead.io/playlists/create-a-landing-page-with-css-grid-and-flexbox-6048
+            // https://egghead.io/lessons/flexbox-create-an-automatically-responsive-flexbox-gallery
 
             return (
               <li>
