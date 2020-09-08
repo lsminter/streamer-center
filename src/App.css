@@ -2,12 +2,6 @@
   text-align: center;
 }
 
-.table{
-  display: flex;
-  flex-direction: row;
-  width: 20%;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -20,7 +14,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: rgb(57, 57, 57);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -32,6 +26,60 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.main-nav ul{
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  -ms-flex-align: start;
+  flex-wrap: wrap;
+  padding: 5%;
+  flex-grow: 1;
+}
+
+.main-nav li{
+  width: 20%;
+  height: auto;
+  padding: 5%;
+  flex-basis: 1;
+  margin: 1%;
+  align-items: center;
+}
+
+.main-nav a{
+  color: white;
+  text-decoration: none;
+}
+
+.main-nav a:hover{
+  color: blue;
+  text-decoration: none;
+  border-radius: 25px;
+}
+
+.username{
+  font-size: 15px;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  white-space: nowrap;
+}
+
+.title{
+  font-size: 15px;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  white-space: nowrap;
+
+}
+
+.viewers{
+  font-size: 15px;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden; 
 }
 
 @keyframes App-logo-spin {

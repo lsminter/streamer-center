@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 import './App.css';
 import useSWR from 'swr'
-import {get, isEmpty} from 'lodash'
+import _, {get, isEmpty} from 'lodash'
 
-import {twitchResponse} from './components/twitch-response'
 
 
 /* 
@@ -18,10 +17,11 @@ Do I want to have `tags` under each streamer? Tags are things like `Esports`, an
 tag_ids are displayed as a string of characters that will match up to a specific word. 
 */
 
-const USER_ID = 'https://api.twitch.tv/helix/users?login=<username>' //Need to figure out how to use the input to replace the username
+const USER_ID = 'https://api.twitch.tv/helix/users?login=<username>' 
 const STREAMS_URL = 'https://api.twitch.tv/helix/streams?user_id='
 const BEARER_TOKEN = 'rxmpajjmb1jvrrad0tu2gth78sip0j'
 const CLIENT_ID = '226970d9mbfxsg83n2taksg2c44hzs'
+const GAME_NAME = 'https://api.twitch.tv/helix/games?id=<game_id>'
 
 //I want to figure out why dotenv isn't working so I can stream my learning. 
 
@@ -42,6 +42,10 @@ function insertUsername (url, el) {
   return url.replace(/<username>/, el)
 }
 
+function insertGameId (url, el) {
+  return url.replace(/<game_id>/, el)
+}
+
 function App() {
 
   
@@ -57,7 +61,7 @@ function App() {
   
   const [streamsData, setStreamsData] = useState({streams: [], currentCursor: null, total: null});
   const [username, setUsername] = useState('Enter username');
-  const [liveStreamers, setLiveStreamers] = useState([])
+  const [liveStreamers, setLiveStreamers] = useState([]);
 
   let id = insertUsername(USER_ID, username)
   const { data: currentUser } = useSWR(id, getData)
@@ -65,8 +69,6 @@ function App() {
   const {data: streams} = useSWR(userID, getData, {onSuccess: (streamsResponse) => {
     const newStreams = streamsData.streams.concat(streamsResponse.data)
     const currentCursor = get(streamsResponse, 'pagination.cursor')
-    console.log(streamsResponse)
-    //This makes one big array. It's too big. Might need to make multiple fetch requests?
     setStreamsData({streams: newStreams, currentCursor, total: streamsResponse.total})
     const streamIds = streamsResponse.data.map(x => x.to_id)
     const streamsUrl = STREAMS_URL + streamIds.join('&user_id=')
@@ -82,33 +84,14 @@ function App() {
         })
     }
   }})
-  console.log(liveStreamers)
-  console.log(userID)
-  //The way we set up the pagination to create one big array means that this is making too big of a request. I can't do more than 100 streamers at a time. 
 
+  
 
-  // function getStreamer() {
-  //   let id = insertUsername(USER_ID, username)
-  //   return getData(id)
-  //     .then(data => {
-  //       const userID = insertId(data.data[0].id)
-  //       console.log(userID)
-  //       return getData(userID)
-  //         .then(data => {
-  //           const streamIds = data.data.map(x => x.to_id)
-  //           const streamsUrl = STREAMS_URL + streamIds.join('&user_id=')
-  //           return getData(streamsUrl) 
-  //             .then(data => { 
-  //               console.log(data.data)
-                 
-  //             })
-  //           });
-  //         })
-  // }
-
+  // The data returned is in order of highest viewers to lower but it gets messed up because of the pagination. It lists them in order of view count for the first 100 then starts over again with the next array of 100 people. I'm creating multiple lists, one for each array. 
+  
   function handleSubmit(evt) {
+    _.debounce(setUsername(), 500);
     evt.preventDefault();
-    setUsername();
   }
   
   return (
@@ -117,31 +100,64 @@ function App() {
         <div>
           <form onSubmit={handleSubmit}>
             Enter your username: 
-            <input type="text" defaultValue='' onChange={(e) => {setUsername(e.target.value)}} />
+            <input 
+              autoFocus={true} 
+              type="text" 
+              defaultValue='' 
+              onChange={(e) => {setUsername(e.target.value)}} />
+              {/* Using onSubmit returns undefined. onChange will run the code as I'm typing (undesired result as listed below). Possibly use `debounce` by lodash? */}
             <input type="submit"/>
           </form>
         </div>
+        {/* Need to figure out how to only run the input when I'm finished typing and now while I'm typing. It's searching for someone while I'm typing my username and it's getting added onto my list of follows. Also need to figure out how to search for another user without having to refresh the page. */}
+        
+        {/* Thinking about using tailwind for styling */}
+        <nav className="main-nav">
+          <ul>{liveStreamers.map((liveStream) => {
 
-        <div className="table"> {/*I think I'm going to look into the course flexbox-fundamentals to learn more about styling*/}
+            let gameLink = insertGameId(GAME_NAME, liveStream.game_id)
+            // cant use useSWR here. 
+            getData(gameLink)
+              .then(response => {
+                console.log(response.data[0].name)
+              }) // We get back the name but I need to figure out how to set this to state to be able to use it later in the app. Can't use setState in here either. I don't think it likes me using hooks here. 
 
-        <ul>{liveStreamers.map((liveStream) => {
-          return (
-            <li> <div>
-            <img alt='' src={replaceThumbnailSize(liveStream.thumbnail_url, '200x150')}></img>
-            <h2>
-              {liveStream.user_name}
-            </h2>
-            <h5>
-            {liveStream.title}
-            </h5>
-            <h5>
-              {liveStream.viewer_count}
-            </h5>
-          </div></li>
-          )
-        })}</ul>
+            return (
+              <li>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+                  <div>
+                    {/*Need to make spaces between elements smaller, a bit more compact.*/}
+                  <a href={"https://twitch.tv/" + liveStream.user_name}>
+                    <img className="picture" alt='' src={replaceThumbnailSize(liveStream.thumbnail_url, '320x180')}></img>
+                  </a>
+                  <a href={"https://twitch.tv/" + liveStream.user_name}>
+                    <h4 className="username">
+                      {liveStream.user_name}
+                    </h4>
+                  </a>
+                  <a href={"https://twitch.tv/" + liveStream.user_name}>
+                    <h5 className="title">
+                    {liveStream.title}
+                    </h5>
+                  </a>
+                  {/* Make it so that hovering over lines that are cut off show the whole line so the user can read it */}
+                  <a href={"https://twitch.tv/" + liveStream.user_name}>
+                    <h3 className="viewers">
+                      Viewers: {liveStream.viewer_count}
+                    </h3>
+                  </a>
+                  <a href={"https://twitch.tv/game/" + liveStream.game_id}>
+                    <h3 className="viewers">
+                      Game Id: {}
+                    </h3>
+                    {/* To get a game's name, I have to make a fet request with the game ID then I can display the name. */}
+                  </a>
+                  </div>
+              </li>
+            )
+          })}</ul>
+        </nav>
 
-        </div>
       </header>
     </div>
   );
