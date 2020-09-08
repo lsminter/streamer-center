@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './App.css';
 import useSWR from 'swr'
-import _, {get, isEmpty} from 'lodash'
+import _, {get, isEmpty, orderBy} from 'lodash'
 
 
 
@@ -19,11 +19,9 @@ tag_ids are displayed as a string of characters that will match up to a specific
 
 const USER_ID = 'https://api.twitch.tv/helix/users?login=<username>' 
 const STREAMS_URL = 'https://api.twitch.tv/helix/streams?user_id='
-const BEARER_TOKEN = 'rxmpajjmb1jvrrad0tu2gth78sip0j'
-const CLIENT_ID = '226970d9mbfxsg83n2taksg2c44hzs'
+const BEARER_TOKEN = process.env.REACT_APP_BEARER_TOKEN
+const CLIENT_ID = process.env.REACT_APP_CLIENT_ID
 const GAME_NAME = 'https://api.twitch.tv/helix/games?id=<game_id>'
-
-//I want to figure out why dotenv isn't working so I can stream my learning. 
 
 function replaceThumbnailSize (url, size) {
   return url.replace(/{width}x{height}/, size)
@@ -85,6 +83,8 @@ function App() {
     }
   }})
 
+  console.log()
+
   // Look into GraphQL https://github.com/mauricew/twitch-graphql-api
   
 
@@ -101,10 +101,10 @@ function App() {
         <div>
           <form onSubmit={handleSubmit}>
             Enter your username: 
-            <input 
-              autoFocus={true} 
-              type="text" 
-              defaultValue='' 
+            <input
+              autoFocus={true}
+              type="text"
+              defaultValue=''
               id="username"
             />
               {/* Using onSubmit returns undefined. onChange will run the code as I'm typing (undesired result as listed below). Possibly use `debounce` by lodash? */}
@@ -115,13 +115,13 @@ function App() {
         
         {/* Thinking about using tailwind for styling */}
         <nav className="main-nav">
-          <ul>{liveStreamers.map((liveStream) => {
+          <ul>{orderBy(liveStreamers, ['viewer_count'], ['desc']).map((liveStream) => {
 
             // let gameLink = insertGameId(GAME_NAME, liveStream.game_id)
             // // cant use useSWR here. 
             // getData(gameLink)
             //   .then(response => {
-            //     // console.log(response.data[0].name)
+            //     console.log(response.data[0].name)
             //   }) // We get back the name but I need to figure out how to set this to state to be able to use it later in the app. Can't use setState in here either. I don't think it likes me using hooks here. 
 
             // styling: https://egghead.io/playlists/create-a-landing-page-with-css-grid-and-flexbox-6048
