@@ -13,9 +13,9 @@ To find how long the streamer has been streaming, you check the `started_at` and
 Each stream has a `LIVE` tag in the top left of the thumbnail. Not sure if this is necessary since I'll only be displaying live streamers. 
 How long the streamer has been streaming is in the top right of the thumbnail. 
 I need to learn how to display items on top of the thumbnail. 
-Do I want to have `tags` under each streamer? Tags are things like `Esports`, and `language`. 
-tag_ids are displayed as a string of characters that will match up to a specific word. 
 */
+
+// Look into GraphQL https://github.com/mauricew/twitch-graphql-api
 
 const USER_ID = 'https://api.twitch.tv/helix/users?login=<username>' 
 const STREAMS_URL = 'https://api.twitch.tv/helix/streams?user_id='
@@ -97,14 +97,6 @@ function App() {
   }})
   
   console.log(gameName)
-
-  // Look into GraphQL https://github.com/mauricew/twitch-graphql-api
-  
-  // let gameLink = buildGameUrl(GAME_NAME, liveStream.game_id)
-  // getData(gameLink)
-  //   .then(response => {
-  //     console.log(response.data[0].name)
-  //   }) 
   
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -123,11 +115,9 @@ function App() {
               defaultValue=''
               id="username"
             />
-              {/* Using onSubmit returns undefined. onChange will run the code as I'm typing (undesired result as listed below). Possibly use `debounce` by lodash? */}
             <input type="submit"/>
           </form>
         </div>
-        {/* Need to figure out how to only run the input when I'm finished typing and now while I'm typing. It's searching for someone while I'm typing my username and it's getting added onto my list of follows. Also need to figure out how to search for another user without having to refresh the page. */}
         
         {/* Thinking about using tailwind for styling */}
         <nav className="main-nav">
@@ -155,7 +145,7 @@ function App() {
                     {liveStream.title}
                     </h5>
                   </a>
-                  {/* Make it so that hovering over lines that are cut off show the whole line so the user can read it */}
+                  {/* Make it so that hovering over lines that are cut off show the whole line so the user can read it. reachui then tipy.js */}
                   <a href={"https://twitch.tv/" + liveStream.user_name}>
                     <h3 className="viewers">
                       Viewers: {liveStream.viewer_count}
@@ -165,7 +155,6 @@ function App() {
                     <h3 className="viewers">
                       {get(gameName, `${liveStream.game_id}.name`)}
                     </h3>
-                    {/* To get a game's name, I have to make a fet request with the game ID then I can display the name. */}
                   </a>
                   </div>
               </li>
