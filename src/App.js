@@ -129,7 +129,7 @@ function App() {
                 <div>
                   {/*Need to make spaces between elements smaller, a bit more compact.*/}
                   <a href={"https://twitch.tv/" + liveStream.user_name}>
-                    <img className="img" alt='' src={replaceThumbnailSize(liveStream.thumbnail_url, '300x250')}></img>
+                    <img className="img" alt='' src={replaceThumbnailSize(liveStream.thumbnail_url, '360x200')}></img>
                   </a>
                   <div className="text-container">
                     <a href={"https://twitch.tv/" + liveStream.user_name}>
