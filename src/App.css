@@ -28,23 +28,15 @@
   color: #61dafb;
 }
 
-.main-nav ul{
+.boxes{
   list-style: none;
   display: flex;
-  flex-direction: row;
-  -ms-flex-align: start;
   flex-wrap: wrap;
-  padding: 5%;
-  flex-grow: 1;
+  flex-grow: inherit;
 }
 
 .main-nav li{
-  width: 20%;
-  height: auto;
-  padding: 5%;
-  flex-basis: 1;
-  margin: 1%;
-  align-items: center;
+  padding: .5%;
 }
 
 .main-nav a{
@@ -55,11 +47,10 @@
 .main-nav a:hover{
   color: blue;
   text-decoration: none;
-  border-radius: 25px;
 }
 
 .username{
-  font-size: 15px;
+  font-size: 18px;
   text-align: left;
   text-overflow: ellipsis;
   overflow: hidden; 
@@ -67,19 +58,37 @@
 }
 
 .title{
-  font-size: 15px;
+  font-size: 12px;
   text-align: left;
   text-overflow: ellipsis;
   overflow: hidden; 
   white-space: nowrap;
-
+  width: 300px;
 }
 
 .viewers{
-  font-size: 15px;
+  font-size: 12px;
   text-align: left;
   text-overflow: ellipsis;
   overflow: hidden; 
+}
+
+.img{
+  object-fit: cover;
+  width: auto;
+  height: auto;
+  border-radius: 15%;
+  border: 3px solid blue;
+}
+
+.box-container{
+  flex-grow: 1;
+}
+
+.text-container{
+  flex-grow: 1;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 @keyframes App-logo-spin {

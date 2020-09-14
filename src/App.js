@@ -1,9 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import useSWR from 'swr'
-import _, {get, isEmpty, orderBy, uniq} from 'lodash'
-
-
+import {get, isEmpty, orderBy, uniq} from 'lodash'
 
 /* 
 Pagination figured out! 
@@ -13,6 +11,7 @@ To find how long the streamer has been streaming, you check the `started_at` and
 Each stream has a `LIVE` tag in the top left of the thumbnail. Not sure if this is necessary since I'll only be displaying live streamers. 
 How long the streamer has been streaming is in the top right of the thumbnail. 
 I need to learn how to display items on top of the thumbnail. 
+Can I get a list of games that a user follows? I don't see this in the API. I don't know if it is possible.
 */
 
 // Look into GraphQL https://github.com/mauricew/twitch-graphql-api
@@ -95,9 +94,7 @@ function App() {
       return acc
     }, {}))
   }})
-  
-  console.log(gameName)
-  
+    
   function handleSubmit(evt) {
     evt.preventDefault();
     setUsername(evt.target.elements.username.value);
@@ -119,44 +116,45 @@ function App() {
           </form>
         </div>
         
-        {/* Thinking about using tailwind for styling */}
+        {/* Thinking about using tailwind for styling - side project? */}
         <nav className="main-nav">
-          <ul>{orderBy(liveStreamers, ['viewer_count'], ['desc']).map((liveStream) => {
+          <ul className="boxes">{orderBy(liveStreamers, ['viewer_count'], ['desc']).map((liveStream) => {
 
 
             // styling: https://egghead.io/playlists/create-a-landing-page-with-css-grid-and-flexbox-6048
             // https://egghead.io/lessons/flexbox-create-an-automatically-responsive-flexbox-gallery
 
             return (
-              <li>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-                  <div>
-                    {/*Need to make spaces between elements smaller, a bit more compact.*/}
+              <li className="box-container">
+                <div>
+                  {/*Need to make spaces between elements smaller, a bit more compact.*/}
                   <a href={"https://twitch.tv/" + liveStream.user_name}>
-                    <img className="picture" alt='' src={replaceThumbnailSize(liveStream.thumbnail_url, '320x180')}></img>
+                    <img className="img" alt='' src={replaceThumbnailSize(liveStream.thumbnail_url, '300x250')}></img>
                   </a>
-                  <a href={"https://twitch.tv/" + liveStream.user_name}>
-                    <h4 className="username">
-                      {liveStream.user_name}
-                    </h4>
-                  </a>
-                  <a href={"https://twitch.tv/" + liveStream.user_name}>
-                    <h5 className="title">
-                    {liveStream.title}
-                    </h5>
-                  </a>
-                  {/* Make it so that hovering over lines that are cut off show the whole line so the user can read it. reachui then tipy.js */}
-                  <a href={"https://twitch.tv/" + liveStream.user_name}>
-                    <h3 className="viewers">
-                      Viewers: {liveStream.viewer_count}
-                    </h3>
-                  </a>
-                  <a href={"https://twitch.tv/directory/game/" + get(gameName, `${liveStream.game_id}.name`)}>
-                    <h3 className="viewers">
-                      {get(gameName, `${liveStream.game_id}.name`)}
-                    </h3>
-                  </a>
+                  <div className="text-container">
+                    <a href={"https://twitch.tv/" + liveStream.user_name}>
+                      <h4 className="username">
+                        {liveStream.user_name}
+                      </h4>
+                    </a>
+                    <a href={"https://twitch.tv/" + liveStream.user_name}>
+                      <h5 className="title">
+                      {liveStream.title}
+                      </h5>
+                    </a>
+                    {/* Make it so that hovering over lines that are cut off show the whole line so the user can read it. reachui then tipy.js */}
+                    <a href={"https://twitch.tv/" + liveStream.user_name}>
+                      <h3 className="viewers">
+                        Viewers: {liveStream.viewer_count}
+                      </h3>
+                    </a>
+                    <a href={"https://twitch.tv/directory/game/" + get(gameName, `${liveStream.game_id}.name`)}>
+                      <h3 className="viewers">
+                        {get(gameName, `${liveStream.game_id}.name`)}
+                      </h3>
+                    </a>
                   </div>
+                </div>
               </li>
             )
           })}</ul>
