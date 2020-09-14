@@ -36,6 +36,11 @@
   padding-left: 0;
 }
 
+.box-container{
+  padding: 0.5%;
+  max-width: 250px;
+}
+
 .main-nav a{
   color: white;
   text-decoration: none;
@@ -60,7 +65,7 @@
   text-overflow: ellipsis;
   overflow: hidden; 
   white-space: nowrap;
-  width: 300px;
+  width: 250px;
 }
 
 .viewers{
@@ -76,15 +81,10 @@
   max-height: 60vh;
   border-radius: 15%;
   border: 3px solid blue;
-  flex-grow: 1;
 }
 
 .img:hover{
   box-shadow: 10px 10px 5px black;
-}
-
-.box-container{
-  padding: 0.5%;
 }
 
 @keyframes App-logo-spin {
