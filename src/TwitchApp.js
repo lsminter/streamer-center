@@ -44,7 +44,7 @@ function buildGameUrl (el) {
   return url.replace(/<game_id>/, el)
 }
 
-function App() {
+function TwitchApp() {
 
   
   async function getData(url, data) { //look into axios possibly (*side project*)
@@ -72,7 +72,7 @@ function App() {
     const streamIds = streamsResponse.data.map(x => x.to_id)
     const streamsUrl = STREAMS_URL + streamIds.join('&user_id=')
     if (isEmpty(streamIds)) {
-      return
+      return 
     } else {
       getData(streamsUrl) 
         .then(response => {
@@ -94,23 +94,28 @@ function App() {
       return acc
     }, {}))
   }})
-    
+   
   function handleSubmit(evt) {
     evt.preventDefault();
+    setUsername(null)
     setUsername(evt.target.elements.username.value);
   }
-  
+
+  // Need to figure out when I hit submit, to be able to run this code again without reloading the page.
+  // Would using axios fix this problem? Is it a REST issue? 
+  console.log(liveStreamers)
+
   return (
     <div className="App">
       <header className="App-header">
         <div>
           <form onSubmit={handleSubmit}>
-            Enter your username: 
+            <label>Enter your username: </label>
             <input
               autoFocus={true}
               type="text"
-              defaultValue=''
               id="username"
+              defaultValue=""
             />
             <input type="submit"/>
           </form>
@@ -165,4 +170,4 @@ function App() {
   );
 }
 
-export default App;
+export default TwitchApp;
