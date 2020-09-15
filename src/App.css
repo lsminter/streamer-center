@@ -38,7 +38,7 @@
 
 .box-container{
   padding: 0.5%;
-  max-width: 250px;
+  max-width: 200px;
 }
 
 .main-nav a{
@@ -65,7 +65,7 @@
   text-overflow: ellipsis;
   overflow: hidden; 
   white-space: nowrap;
-  width: 250px;
+  width: 100%;
 }
 
 .viewers{

@@ -12,6 +12,8 @@ Each stream has a `LIVE` tag in the top left of the thumbnail. Not sure if this 
 How long the streamer has been streaming is in the top right of the thumbnail. 
 I need to learn how to display items on top of the thumbnail. 
 Can I get a list of games that a user follows? I don't see this in the API. I don't know if it is possible.
+
+I love the idea of doing tabs for each site, twich, youtube, facebookgaming. 
 */
 
 // Look into GraphQL https://github.com/mauricew/twitch-graphql-api
@@ -84,6 +86,8 @@ function TwitchApp() {
     }
   }})
 
+  // Need to learn error handling for when there are no streamers live at the time. 
+
   let liveGameIds = uniq(liveStreamers.map((stream) => {
     return stream.game_id
   }))
@@ -97,7 +101,6 @@ function TwitchApp() {
    
   function handleSubmit(evt) {
     evt.preventDefault();
-    setUsername(null)
     setUsername(evt.target.elements.username.value);
   }
 
@@ -135,6 +138,7 @@ function TwitchApp() {
                   {/*Need to make spaces between elements smaller, a bit more compact.*/}
                   <a href={"https://twitch.tv/" + liveStream.user_name}>
                     <img className="img" alt='' src={replaceThumbnailSize(liveStream.thumbnail_url, '360x200')}></img>
+                  {/* use a ref to query the size of the element */}
                   </a>
                   <div className="text-container">
                     <a href={"https://twitch.tv/" + liveStream.user_name}>

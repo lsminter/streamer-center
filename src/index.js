@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import TwitchApp from './TwitchApp';
 import * as serviceWorker from './serviceWorker';
+import Login from './Login';
 
 ReactDOM.render(
   <React.StrictMode>
