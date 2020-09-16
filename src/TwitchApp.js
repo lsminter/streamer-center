@@ -8,12 +8,13 @@ Pagination figured out!
 I need user_name, game_id, thumbnail_url, title, viewer_count, started_at.
 The viewer_count is displayed as an overlay on the thumbnail_url.
 To find how long the streamer has been streaming, you check the `started_at` and compare that to what the time is now. 
-Each stream has a `LIVE` tag in the top left of the thumbnail. Not sure if this is necessary since I'll only be displaying live streamers. 
 How long the streamer has been streaming is in the top right of the thumbnail. 
 I need to learn how to display items on top of the thumbnail. 
 Can I get a list of games that a user follows? I don't see this in the API. I don't know if it is possible.
 
-I love the idea of doing tabs for each site, twich, youtube, facebookgaming. 
+I love the idea of doing tabs for each site, twitch, youtube, facebookgaming. 
+
+Learn to create multiple pages - look into react-router https://stackoverflow.com/questions/41956465/how-to-create-multiple-page-app-using-react
 */
 
 // Look into GraphQL https://github.com/mauricew/twitch-graphql-api
@@ -111,18 +112,20 @@ function TwitchApp() {
   return (
     <div className="App">
       <header className="App-header">
-        <div>
-          <form onSubmit={handleSubmit}>
-            <label>Enter your username: </label>
-            <input
-              autoFocus={true}
-              type="text"
-              id="username"
-              defaultValue=""
-            />
-            <input type="submit"/>
-          </form>
-        </div>
+        <nav className="top-nav">
+          <div>
+            <form onSubmit={handleSubmit}>
+              <label>Enter your username: </label>
+              <input
+                autoFocus={true}
+                type="text"
+                id="username"
+                defaultValue=""
+              />
+              <input type="submit"/>
+            </form>
+          </div>
+        </nav>
         
         {/* Thinking about using tailwind for styling - side project? */}
         <nav className="main-nav">
