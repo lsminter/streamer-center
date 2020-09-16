@@ -1,0 +1,113 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: rgb(57, 57, 57);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.boxes{
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-left: 0;
+  flex: 1;
+}
+
+.box-container{
+  padding: 0.5%;
+  max-width: 250px;
+}
+
+.main-nav a{
+  color: white;
+  text-decoration: none;
+}
+
+.main-nav a:hover{
+  color: blue;
+  text-decoration: none;
+}
+
+.username{
+  font-size: 18px;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  white-space: nowrap;
+  padding: 0px;
+}
+
+.title{
+  font-size: 12px;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  white-space: nowrap;
+  width: inherit;
+}
+
+.title:hover{
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-all;
+}
+
+.viewers{
+  font-size: 12px;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden; 
+}
+
+.img{
+  width: 100%;
+  border-radius: 15%;
+  border: 3px solid blue;
+}
+
+.img:hover{
+  box-shadow: 10px 10px 5px black;
+}
+
+.top-nav{
+  position: sticky;
+  top: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: inherit;
+  width: 100%
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

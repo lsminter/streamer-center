@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import './App.css';
-import useSWR from 'swr'
-import {get, isEmpty, orderBy, uniq} from 'lodash'
+import './Views.css';
+import useSWR from 'swr';
+import {get, isEmpty, orderBy, uniq} from 'lodash';
 
 /* 
 Pagination figured out! 
@@ -110,7 +110,7 @@ function TwitchApp() {
   console.log(liveStreamers)
 
   return (
-    <div className="App">
+    <div className="App">  
       <header className="App-header">
         <nav className="top-nav">
           <div>
