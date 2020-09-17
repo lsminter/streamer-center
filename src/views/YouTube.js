@@ -13,4 +13,6 @@ function YouTube() {
   );
 }
 
+// https://developers.google.com/youtube/v3/guides/implementation/subscriptions#subscriptions-retrieve-for-channel
+
 export default YouTube;
