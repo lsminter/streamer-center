@@ -4,40 +4,49 @@ import Twitch from './views/Twitch';
 import Home from './views/Home'
 import FacebookGaming from './views/FacebookGaming';
 import YouTube from './views/YouTube';
+import Login from "./containers/Login";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  NavLink
 } from "react-router-dom";
 
-
+// if home isn't /home then the home link will always be active. 
 function App() {
   return (
-    <div>
+    <div className="background">
       <Router>
         <div>
-          <nav>
             {/* Figure out how to not reset pages when swapping between them. */}
-            <ul className="header">
-              <li className="font-size">
-                <Link to="/">Home</Link>
-              </li>
-              <li className="font-size">
-                <Link to="/twitch">Twitch</Link>
-              </li>
-              <li className="font-size">
-                <Link to="/youtube">YouTube</Link>
-              </li>
-              <li className="font-size">
-                <Link to="/facebookgaming">FacebookGaming</Link>
-              </li>
-            </ul>
-          </nav>
+            <div className="header background border">
+              <nav className="div1">
+                <ul className="list-style">
+                  <li className="font-size align">
+                    <NavLink to="/home" className="inactive" activeClassName="active">Home</NavLink>
+                  </li>
+                  <li className="font-size align">
+                    <NavLink to="/login" className="inactive" activeClassName="active">Login</NavLink>
+                  </li>
+                  <li className="font-size align">
+                    <NavLink to="/twitch" className="inactive" activeClassName="active">Twitch</NavLink>
+                  </li>
+                  <li className="font-size align">
+                    <NavLink to="/youtube" className="inactive" activeClassName="active">YouTube</NavLink>
+                  </li>
+                  <li className="font-size align">
+                    <NavLink to="/facebookgaming" className="inactive" activeClassName="active">FacebookGaming</NavLink>
+                  </li>
+                </ul>
+              </nav>
+            </div>
 
           {/* A <Switch> looks through its children <Route>s and
               renders the first one that matches the current URL. */}
           <Switch>
+          <Route exact path="/login">
+            <Login />
+          </Route>
             <Route path="/youtube">
               <YouTube />
             </Route>
@@ -47,7 +56,7 @@ function App() {
             <Route path="/twitch">
               <Twitch />
             </Route>
-            <Route path="/">
+            <Route path="/home">
               <Home />
             </Route>
           </Switch>
