@@ -198,7 +198,6 @@ function TwitchApp() {
     resetStreamerState()
   }
 
-
   return (
     <div className="App">
       <header className="App-header">
@@ -208,7 +207,7 @@ function TwitchApp() {
             <a href={twitchOauthUrl}>Login to Twitch</a>
             {/* This is only showing up randomly. Sometimes automatic, when I click randomly, but does 100% on refresh. */}
             <form className="input" onSubmit={handleSubmit}>
-              <label>Enter your username: </label>
+              <label>Search for a user: </label>
               <input
                 autoFocus={true}
                 type="text"
